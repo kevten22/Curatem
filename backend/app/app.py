@@ -9,6 +9,17 @@ app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhos
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+class UserModel(db.Model):
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String())
+    password = db.Column(db.String())
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
 @app.route('/')
 def hello():
     return "Hello World!"

@@ -1,15 +1,13 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 import os
 
 
 app = Flask(__name__)
-app.config.from_object(os.environ['APP_SETTINGS'])
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/curatem"
 db = SQLAlchemy(app)
-
-from models import Result
-
+migrate = Migrate(app, db)
 
 @app.route('/')
 def hello():

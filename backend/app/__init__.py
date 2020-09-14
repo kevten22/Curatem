@@ -6,8 +6,8 @@ db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__, instance_relative_config=False)
-    db.init_app(app)
     app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres123@localhost:5433/Curatem"
+    db.init_app(app)
     migrate = Migrate(app, db)
 
     with app.app_context():

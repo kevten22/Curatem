@@ -1,6 +1,7 @@
-from flask import current_app as app
+from flask import current_app as app, request
 from app import db
 from app.routes import bp
+from app.models.user_models import User
 
 @bp.route('/register', methods=['POST'])
 def register():

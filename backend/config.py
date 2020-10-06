@@ -6,12 +6,8 @@ load_dotenv(os.path.join(basedir, '.env'))
 
 
 class Config(object):
-    DEBUG = False
-    TESTING = False
-    CSRF_ENABLED = True
-    SECRET_KEY = 'this-really-needs-to-be-changed'
-    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
-
+    SECRET_KEY = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    
 
 class ProductionConfig(Config):
     DEBUG = False
@@ -23,8 +19,9 @@ class StagingConfig(Config):
 
 
 class DevelopmentConfig(Config):
-    DEVELOPMENT = True
+    FLASK_ENV = 'development'
     DEBUG = True
+    SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
 
 
 class TestingConfig(Config):

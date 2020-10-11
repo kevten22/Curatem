@@ -1,4 +1,5 @@
 from app import db
+from flask_bcrypt import generate_password_hash, check_password_hash
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -9,7 +10,7 @@ class User(db.Model):
 
     def __init__(self, username, password):
         self.username = username
-        self.password = password
+        self.password = generate_password_hash(password).decode('utf8')
 
     def __repr__(self):
         return f"<User {self.name}>"

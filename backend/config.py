@@ -19,6 +19,7 @@ class StagingConfig(Config):
 
 
 class DevelopmentConfig(Config):
+    DEVELOPMENT = True
     FLASK_ENV = 'development'
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')

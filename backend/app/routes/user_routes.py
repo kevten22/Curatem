@@ -5,7 +5,7 @@ from app.routes import bp
 from app.models.user_models import User
 import datetime
 
-@bp.route('/register', methods=['POST'])
+@bp.route('/user/register', methods=['POST'])
 def register():
     try:
         username = request.json.get('username', None)
@@ -15,12 +15,12 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        return 'success', 200
+        return 'Success', 200
 
     except AttributeError:
         return 'Provide a Username and Password in JSON format in the request body', 400
 
-@bp.route('/login', methods=['POST'])
+@bp.route('/user/login', methods=['POST'])
 def login():
     try:
         username = request.json.get('username', None)

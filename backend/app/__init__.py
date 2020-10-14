@@ -18,7 +18,6 @@ def create_app():
     migrate.init_app(app, db)
     
     with app.app_context():
-        db.create_all()
 
         from app.models import bp as models_bp
         app.register_blueprint(models_bp)

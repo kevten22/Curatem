@@ -6,7 +6,8 @@ load_dotenv(os.path.join(basedir, '.env'))
 
 
 class Config(object):
-    SECRET_KEY = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    FLASK_ENV = 'development'
     
 
 class ProductionConfig(Config):
@@ -23,6 +24,7 @@ class DevelopmentConfig(Config):
     FLASK_ENV = 'development'
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
+    FLASK_RUN_PORT=8080
 
 
 class TestingConfig(Config):

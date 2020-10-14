@@ -7,6 +7,7 @@ from flask_jwt_extended import JWTManager
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 jwt = JWTManager()
+migrate = Migrate()
 
 def create_app():
     app = Flask(__name__, instance_relative_config=False)
@@ -14,10 +15,9 @@ def create_app():
     db.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
-    migrate = Migrate(app, db)
+    migrate.init_app(app, db)
     
     with app.app_context():
-        db.create_all()
 
         from app.models import bp as models_bp
         app.register_blueprint(models_bp)

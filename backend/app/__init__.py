@@ -3,11 +3,13 @@ from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
+from flask_marshmallow import Marshmallow
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 jwt = JWTManager()
 migrate = Migrate()
+ma = Marshmallow()
 
 def create_app():
     app = Flask(__name__, instance_relative_config=False)
@@ -16,6 +18,7 @@ def create_app():
     bcrypt.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
+    ma.init_app(app)
     
     with app.app_context():
 

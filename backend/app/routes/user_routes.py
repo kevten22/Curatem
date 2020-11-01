@@ -7,29 +7,38 @@ from app.models.user_models import User
 from app.schemas.user_schemas import UserSchema
 import datetime
 
-@bp.route('/user', methods=['GET'])
+@bp.route('/user/register', methods=['POST'])
 @swag_from({
+        'tags': ['Users'],
+        'parameters': [{
+                "name": "body",
+                "in": "body",
+                "required": "true",
+                "schema": {
+                    "id": "UserSchema",
+                    "required": [
+                        "email",
+                        "username",
+                        "password"
+                    ],
+                }
+         }],
         'responses': {
             200: {
-                'description': 'This is the schema for the User model',
-                'schema': UserSchema
+                'description': 'Success',
             }
         }
-})
-def documentation():
-    """
-    Hello
-    """
-    result = 'hi'
-    return jsonify(result)
-
-@bp.route('/user/register', methods=['POST'])
+}, validation=True)
 def register():
+    """
+    This route is used for registering a user and receiving an access token in return
+    """
     try:
+        email = request.json.get('email', None)
         username = request.json.get('username', None)
         password = request.json.get('password', None)
 
-        user = User(username=username,password=password)
+        user = User(email=email, username=username,password=password)
         db.session.add(user)
         db.session.commit()
 
@@ -39,6 +48,29 @@ def register():
         return 'Provide a Username and Password in JSON format in the request body', 400
 
 @bp.route('/user/login', methods=['POST'])
+@swag_from({
+    "tags": ['Users'],
+    'parameters': [{
+            "name": "email",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "The user's email address."
+        },
+        {
+            "name": "password",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "The user's password."
+        }],
+    'responses': {
+            200: {
+                'description': 'An access token for the user to log in with',
+            }
+        }
+
+})
 def login():
     try:
         username = request.json.get('username', None)

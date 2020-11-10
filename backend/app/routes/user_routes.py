@@ -31,7 +31,7 @@ import datetime
 }, validation=True)
 def register():
     """
-    This route is used for registering a user and receiving an access token in return
+    Register a user
     """
     try:
         email = request.json.get('email', None)
@@ -72,6 +72,9 @@ def register():
 
 })
 def login():
+    """
+    Login in a user
+    """
     try:
         username = request.json.get('username', None)
         password = request.json.get('password', None)

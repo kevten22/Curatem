@@ -24,6 +24,11 @@ def create_app():
     swag.init_app(app)
     app.config['SWAGGER'] = {
         'title': 'Curatem Backend API',
+        'securityDefinitions': {
+            'BasicAuth': {
+                    'type': 'basic',
+            }
+        },
     }
     
     with app.app_context():

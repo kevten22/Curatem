@@ -26,6 +26,7 @@ import datetime
         'responses': {
             200: {
                 'description': 'Success',
+                'schema': UserSchema
             }
         }
 }, validation=True)

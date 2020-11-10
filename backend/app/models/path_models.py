@@ -9,4 +9,6 @@ class Path(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     likes = db.Column(db.Integer)
     dislikes = db.Column(db.Integer)
+    followers = db.relationship('User', secondary="followers")
+    users_completed = db.relationship('User', secondary="paths_completed")
     

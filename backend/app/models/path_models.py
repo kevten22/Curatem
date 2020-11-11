@@ -20,3 +20,12 @@ class Level(db.Model):
     difficulty = db.Column(db.String())
     path = db.Column(db.Integer, db.ForeignKey('paths.id'))
     following_level = db.Column(db.Integer, db.ForeignKey('levels.id'))
+    courses = db.relationship('Course')
+
+class Course(db.Model):
+    __tablename__ = 'courses'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String())
+    url = db.Column(db.String())
+    image_url = db.Column(db.String())
+    level = db.Column(db.Integer, db.ForeignKey('levels.id'))

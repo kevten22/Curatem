@@ -3,8 +3,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flasgger import swag_from
 from app import db
 from app.routes import bp
-from app.models.path_models import Path, Level
-from app.schemas.path_schemas import PathSchema, LevelSchema
+from app.models.path_models import Path, Level, Course
+from app.schemas.path_schemas import PathSchema, LevelSchema, CourseSchema
 
 @jwt_required
 @bp.route('/path', methods=['POST'])
@@ -271,14 +271,20 @@ def createLevel():
                 "name": "JWT Access Token",
                 "in": "header",
                 "required": "true",
+         },
+         {
+                "name": "Path id",
+                "in": "path",
+                "type":"integer",
+                "required": "true"
          }],
         'responses': {
             200: {
                 'description': 'A list of the levels that belong to the path id provided in the path',
                 'schema': LevelSchema
             },
-            400: {
-                'description': 'Something went wrong in retrieving the user''s paths'
+            401: {
+                'description': 'Something went wrong in retrieving levels that belong to this path id'
             }
         }
 })
@@ -292,7 +298,7 @@ def readPathLevels(path_id):
         return levels, 200
     
     except AttributeError:
-        return 'Something went wrong in retrieving the user''s paths', 401
+        return 'Something went wrong in retrieving the levels that belong to this path id', 401
 
 @jwt_required
 @bp.route('/path/level/<int:level_id>', methods=['PUT'])
@@ -393,4 +399,230 @@ def deleteLevel(level_id):
     except AttributeError:
         return 'There was an error with the database deleting this path', 400    
 
-        
+@jwt_required
+@bp.route('/path/level/course', methods=['POST'])
+@swag_from({
+        'tags': ['Courses'],
+        'security': {
+            'BasicAuth': []
+        },
+        'parameters': [
+            {
+                "name": "JWT Access Token",
+                "in": "header",
+                "required": "true",
+            },
+            {
+                "name": "body",
+                "in": "body",
+                "required": "true",
+                "schema": {
+                    "id": "CourseSchema",
+                    "required": [
+                        "name",
+                        "url"
+                    ],
+                }
+         }],
+        'responses': {
+            200: {
+                'description': 'Success!',
+                'schema': CourseSchema
+            },
+            400: {
+                'description': 'Please provide a Name(string) and a URL(string)'
+            }
+        }
+
+}, validation=True)
+def createCourse():
+    """
+    Create a course
+    """
+    try:
+        body = request.json()
+        course = Course(**body)
+        db.session.add(course)
+        db.session.commit()
+
+        return 'Success!', 200
+
+    except AttributeError:
+        return 'Please provide a Name(string) and a URL(string)', 400
+
+@jwt_required
+@bp.route('/path/level/course/<int:level_id>', methods=['GET'])
+@swag_from({
+        'tags': ['Courses'],
+        'security': {
+            'BasicAuth': []
+        },
+        'parameters': [{
+                "name": "JWT Access Token",
+                "in": "header",
+                "required": "true",
+         },
+         {
+                "name": "Level id",
+                "in": "path",
+                "type":"integer",
+                "required": "true"
+         }],
+        'responses': {
+            200: {
+                'description': 'A list of the courses that belong to the level id provided in the path',
+                'schema': CourseSchema
+            },
+            400: {
+                'description': 'Something went wrong in retrieving the courses that belong to this level id'
+            }
+        }
+})
+def readLevelCourses(level_id):
+    """
+    Get all courses that belong to a level
+    """
+    try:
+        levels = db.session.query(Course).filter_by(level_id)
+
+        return levels, 200
+    
+    except AttributeError:
+        return 'Something went wrong in retrieving the courses that belong to this level id', 401
+
+@jwt_required
+@bp.route('/path/course/<int:path_id>', methods=['GET'])
+@swag_from({
+        'tags': ['Courses'],
+        'security': {
+            'BasicAuth': []
+        },
+        'parameters': [{
+                "name": "JWT Access Token",
+                "in": "header",
+                "required": "true",
+                },
+                {
+                "name": "Path id",
+                "in": "path",
+                "type":"integer",
+                "required": "true"
+         }],
+        'responses': {
+            200: {
+                'description': 'A list of the courses that belong to the path id provided in the path',
+                'schema': CourseSchema
+            },
+            400: {
+                'description': 'Something went wrong in retrieving the courses that belong to this path id'
+            }
+        }
+})
+def readPathCourses(path_id):
+    """
+    Get all courses that belong to a path
+    """
+    try:
+
+        levels = db.session.query(Level).filter_by(path_id)
+        courses = db.session.query(Course).filter_by(levels)
+
+        return courses, 200
+    
+    except AttributeError:
+        return 'Something went wrong in retrieving the courses that belong to this path id', 401
+
+@jwt_required
+@bp.route('/path/level/course/<int:course_id>', methods=['PUT'])
+@swag_from({
+        'tags': ['Courses'],
+        'security': {
+            'BasicAuth': []
+        },
+        'parameters': [{
+                "name": "JWT Access Token",
+                "in": "header",
+                "required": "true",
+         },
+         {
+                "name": "Course id",
+                "in": "path",
+                "type":"integer",
+                "required": "true"
+         },
+         {
+                "name": "body",
+                "in": "body",
+                "required": "true",
+                "schema": {
+                    "id": "CourseSchema"
+                }
+         }],
+        'responses': {
+            200: {
+                'description': 'An updated course will be returned',
+                'schema': CourseSchema
+            },
+            401: {
+                'description': 'Something went wrong in updating this course'
+            }
+        }
+
+}, validation=True)
+def updateCourse(course_id):
+    """
+    Update a course by course id
+    """
+    try:
+        updated_course = request.json()
+        path = db.session.query(course).filter(id = course_id).update(updated_course)
+        db.session.commit()
+
+        return level, 200
+    
+    except AttributeError:
+        return 'Something went wrong in updating this course', 401
+
+@jwt_required
+@bp.route('/path/level/course/<int:course_id>', methods=['DELETE'])
+@swag_from({
+        'tags': ['Courses'],
+        'security': {
+            'BasicAuth': []
+        },
+        'parameters': [{
+                "name": "JWT Access Token",
+                "in": "header",
+                "required": "true",
+         },
+         {
+                "name": "Course id",
+                "in": "path",
+                "type":"integer",
+                "required": "true"
+         }],
+        'responses': {
+            200: {
+                'description': 'Course successfully deleted'
+            },
+            400: {
+                'description': 'Something went wrong deleting this course'
+            }
+        }
+
+})
+def deleteCourse(course_id):
+    """
+    Delete a course by course id
+    """
+    try:
+        if course_id is None:
+            return "Please provide a valid course id", 401
+
+        path = db.session.query(Course).filter(id = course_id).delete()
+        db.session.commit()
+
+        return "Course successfully deleted", 200
+
+    except AttributeError:
+        return 'There was an error with the database deleting this course', 400
